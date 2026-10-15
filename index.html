@@ -129,6 +129,7 @@ main .wrap{padding-block:72px 80px;display:grid;gap:88px}
 .r-intro{margin:0 0 28px;max-width:64ch;font-size:18px;color:var(--fg)}
 .news{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px 24px}
 .news li{display:grid;gap:2px}
+.news a{text-decoration-thickness:1px}
 .news .when{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--kicker);text-transform:uppercase}
 .route{display:grid;grid-template-columns:repeat(var(--stops,3),minmax(0,1fr));gap:28px}
 .stop{border-top:3px solid var(--fg);padding-top:18px;display:grid;gap:14px;align-content:start}
@@ -255,6 +256,15 @@ footer .note{flex-basis:100%;font-family:var(--f-mono);font-size:12px;color:var(
   /* address: a list of lines, or one string (a "\n" inside it also starts a new line) */
   var addrLines = function () { var a = C.address; return Array.isArray(a) ? a : String(a || "").split("\n"); };
   var sub = C.subtitles || {};
+  /* [link text](address) inside text becomes a link. Addresses starting with http(s)
+     open in a new tab; relative ones ("notebook-to-cluster/", "assets/x.pdf") stay on the site. */
+  var inlineLinks = function (t) {
+    return esc(t).replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, function (_, label, url) {
+      if (/^\s*javascript:/i.test(url)) return label;
+      var ext = /^https?:/i.test(url);
+      return '<a href="' + url + '"' + (ext ? ' target="_blank" rel="noopener"' : "") + ">" + label + "</a>";
+    });
+  };
 
   /* ---------- identity ---------- */
   var nick = C.nickname ? " (" + C.nickname + ")" : "";
@@ -383,7 +393,7 @@ footer .note{flex-basis:100%;font-family:var(--f-mono);font-size:12px;color:var(
   var fmtDate = function (d) { var p = String(d).split("-"); return (p[1] ? MONTHS[+p[1] - 1] + " " : "") + p[0]; };
   var news = list(C.news).slice().sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });
   if (news.length) add("news", "News", '<ul class="news">' + news.map(function (n) {
-    return '<li><span class="when">' + esc(fmtDate(n.date)) + "</span><span>" + esc(n.text) + (n.url ? " " + link(n.url, "→") : "") + "</span></li>";
+    return '<li><span class="when">' + esc(fmtDate(n.date)) + "</span><span>" + inlineLinks(n.text) + (n.url ? " " + link(n.url, "→") : "") + "</span></li>";
   }).join("") + "</ul>");
 
   var me = C.highlightAuthor ? esc(C.highlightAuthor) : null;

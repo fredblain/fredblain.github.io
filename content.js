@@ -160,7 +160,7 @@ window.CONTENT = {
   /* ---------- News (newest first is automatic; delete all entries to hide the section) ----------
      date: "YYYY-MM" or "YYYY-MM-DD" */
   news: [
-    { date: "2026-10", text: "Introducing 'From Notebook to Cluster': four illustrated, comics-style guides to help students take code from GitHub to a shared GPU server, one step at a time." },
+    { date: "2026-10", text: "Introducing ['From Notebook to Cluster'](https://fredblain.github.io/notebook-to-cluster): four illustrated, comics-style guides to help students take code from GitHub to a shared GPU server, one step at a time." },
     { date: "2026-10", text: "Findings paper of the WMT'26 Shared Task on Automated MT Evaluation is out (100 pages!!)." },
     { date: "2026-05", text: "Paper on gender disambiguation in MT at LREC 2026." },
     { date: "2025-06", text: "Paper on gender disambiguation and attention in MT at GITT 2025." }
