@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Same address as siteUrl in content.js.
+     Update <lastmod> when you make a significant change. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://fredblain.github.io/</loc>
+    <lastmod>2026-10-15</lastmod>
+  </url>
+</urlset>
