@@ -73,6 +73,7 @@ window.CONTENT = {
      In "faulty.text", wrap each error in [[double brackets]]: it gets
      underlined on the page. Quality scores are illustrative. */
   tagline: {
+    label: "Quality estimation",   // its name in the scene bar under the animations
     secondsPerLanguage: 3,
     languages: [
       { code: "en", label: "EN", name: "English (source)" },
@@ -130,6 +131,96 @@ window.CONTENT = {
     ]
   },
 
+  /* ---------- Animations that take turns with the tagline above ----------
+     "order" sets the sequence; "qe" is the tagline above. Remove a name
+     from "order" to hide that animation. Each animation can also be a
+     list of examples, [ {…}, {…} ]: the next one plays on each pass.
+     "from" and "to" are language codes. Scores are illustrative. */
+  animations: {
+    title: "",   // optional heading, top right of the animation panel; "" = none
+    order: [ "llm", "attention", "qe", "wordqe", "spanqe", "judge", "counterfactual", "postedit"],
+    holdSeconds: 4,          // how long a finished animation stays on screen
+
+    // A translator corrects the MT output; edits and HTER are counted for you.
+    postedit: {
+      label: "Post-editing", from: "en", to: "fr",
+      source: "The committee postponed the vote until next week.",
+      mt: "Le comité a remis le voter jusqu’à semaine prochaine.",
+      corrected: "Le comité a reporté le vote à la semaine prochaine."
+    },
+
+    // Error spans, as in the WMT quality estimation shared tasks: mark each
+    // span in the translation as [[text|major]] or [[text|minor]], and
+    // optionally add a note: [[text|major|note]]. The score is the MQM-style
+    // penalty used in those tasks: major = −5, minor = −1.
+    spanqe: {
+      label: "Span-level QE", from: "en", to: "de",
+      source: "She left the keys on the bank of the river before the storm.",
+      translation: "Sie ließ die Schlüssel [[auf der Bank|major|“Bank” is a bench here: should be “am Ufer”]] des Flusses vor [[den|minor|wrong case: should be “dem”]] Sturm."
+    },
+
+    // One score per word (0–1); below 0.5 is bad, below 0.8 doubtful.
+    // A third value is the fix shown under a bad word.
+    wordqe: {
+      label: "Word-level QE", from: "en", to: "de",
+      source: "She left the keys on the bank of the river.",
+      words: [["Sie", 0.97], ["ließ", 0.91], ["die", 0.98], ["Schlüssel", 0.95], ["auf", 0.72],
+              ["der", 0.88], ["Bank", 0.12, "Ufer"], ["des", 0.83], ["Flusses.", 0.90]]
+    },
+
+    // {first|second} is the word that flips. Each list has the value
+    // before and after the flip. [[...]] marks the error after the flip.
+    counterfactual: {
+      label: "Counterfactual test", from: "en", to: "de",
+      source: "The doctor finished {his|her} shift.",
+      output: ["Der Arzt beendete seine Schicht.", "[[Der Arzt]] beendete ihre Schicht."],
+      expected: ["Der Arzt beendete seine Schicht.", "Die Ärztin beendete ihre Schicht."],
+      metric: [0.88, 0.86],
+      human: ["correct", "wrong gender"],
+      note: "“Arzt” should be “Ärztin”"
+    },
+
+    // [[...]] marks the span the judge flags (with the first finding that is not ok).
+    judge: {
+      label: "LLM as a judge", from: "en", to: "es",
+      source: "The meeting was pushed back to Friday.",
+      translation: "La reunión fue [[empujada hacia atrás]] al viernes.",
+      findings: [
+        { ok: true,  label: "Accuracy",        text: "meaning kept: moved to Friday" },
+        { ok: false, label: "Fluency · major", text: "word-for-word calque → “se aplazó”" },
+        { ok: true,  label: "Terminology",     text: "no issues" }
+      ],
+      scores: [{ label: "LLM judge", value: 64 }, { label: "Human (MQM)", value: 60 }]
+    },
+
+    // weights: one row per target word, one number per source word.
+    attention: {
+      label: "Neural MT", from: "en", to: "fr",
+      source: ["the", "black", "cat", "sleeps"],
+      target: ["le", "chat", "noir", "dort"],
+      weights: [[0.85, 0.05, 0.08, 0.02],
+                [0.06, 0.12, 0.78, 0.04],
+                [0.04, 0.81, 0.12, 0.03],
+                [0.03, 0.03, 0.10, 0.84]],
+      note: "crossing lines: “black cat” → “chat noir”"
+    },
+
+    // choices: the top next-token candidates shown for some tokens.
+    llm: {
+      label: "LLM translation", to: "nl",
+      prompt: "Translate into Dutch. Keep it informal.",
+      source: "Thanks for coming, see you next week!",
+      tokens: ["Bedankt", "dat", "je", "er", "was,", "tot", "volgende", "week!"],
+      choices: {
+        "Bedankt":  [["Bedankt", 0.71], ["Dank", 0.18], ["Hartelijk", 0.06]],
+        "je":       [["je", 0.81], ["u", 0.14], ["jullie", 0.05]],
+        "volgende": [["volgende", 0.88], ["komende", 0.09], ["de", 0.02]]
+      },
+      focus: "je",
+      note: "“je”, not “u”: the prompt asked for informal"
+    }
+  },
+
   /* ---------- Section headings: small multilingual subtitles ---------- */
   subtitles: {
     about: "over · à propos · über",
@@ -158,7 +249,10 @@ window.CONTENT = {
   },
 
   /* ---------- News (newest first is automatic; delete all entries to hide the section) ----------
-     date: "YYYY-MM" or "YYYY-MM-DD" */
+     date: "YYYY-MM" or "YYYY-MM-DD"
+     Links inside the text: [link text](address), e.g.
+       "Paper at [LREC 2026](https://aclanthology.org/2026.lrec-1.673/)."
+     Several links per item are fine; a site page can be relative: [guides](notebook-to-cluster/). */
   news: [
     { date: "2026-10", text: "Introducing ['From Notebook to Cluster'](https://fredblain.github.io/notebook-to-cluster): four illustrated, comics-style guides to help students take code from GitHub to a shared GPU server, one step at a time." },
     { date: "2026-10", text: "Findings paper of the WMT'26 Shared Task on Automated MT Evaluation is out (100 pages!!)." },

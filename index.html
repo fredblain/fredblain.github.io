@@ -39,7 +39,7 @@
   --bg:#f4f6f7; --fg:#10222e; --muted:#3e5260; --sub:#5c7180; --line:#d5dee3; --card:#ffffff;
   --kicker:#8a5308; --link:#0b5a80; --link-h:#063b55; --pill:#0e2a3b; --pill-fg:#f3efe6;
   --hero:#0e2a3b; --hero-fg:#f3efe6; --hero-sub:#a9bfcc; --hero-line:#2f566d; --hero-track:#1d4157;
-  --amber:#f4b860; --red:#ff8a78; --red-soft:#ffcfc6;
+  --amber:#f4b860; --red:#ff8a78; --red-soft:#ffcfc6; --green:#8ad9aa;
   --f-display:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   --f-ja:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Yu Gothic","Meiryo","Noto Sans JP","Noto Sans CJK JP",sans-serif; /* Japanese: the visitor's system font */
@@ -106,6 +106,117 @@ footer .legal a{color:var(--hero-sub)}footer .legal a:hover{color:var(--amber)}
 .track{height:8px;background:var(--hero-track);border-radius:4px;overflow:hidden}
 .bar{height:100%;width:0;background:var(--amber);transition:width .5s ease}
 .bar.bad{background:var(--red)}
+
+/* Hero scenes: the tagline and the research animations take turns in one spot.
+   All scenes are stacked, so the hero keeps the height of the tallest. */
+.stage{display:grid;gap:22px;max-width:980px;margin-top:22px;padding:20px 28px 16px;border:1px solid var(--hero-line);border-radius:14px;background:rgba(255,255,255,.035)}
+.stage-h{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--hero-sub);padding-bottom:14px;border-bottom:1px solid var(--hero-line)}
+.stage-h span:first-child{color:var(--amber)}
+.scenes{display:grid;max-width:880px}
+.scene{grid-area:1/1;display:grid;gap:22px;align-content:start;min-width:0;visibility:hidden}
+.scene.on{visibility:visible}
+.scene:not(.on) *{visibility:hidden!important}
+.scene-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.segs{display:flex;flex-wrap:wrap;gap:2px}
+.seg{width:30px;height:28px;padding:0;border:0;background:transparent;cursor:pointer;display:inline-flex;align-items:center}
+.seg::before{content:"";width:100%;height:4px;border-radius:2px;background:var(--hero-line);transition:background .2s}
+.seg:hover::before{background:var(--hero-sub)}
+.seg[aria-current="true"]::before{background:var(--amber)}
+.seg:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.a-src{margin:0;font-family:var(--f-mono);font-size:14px;color:var(--hero-sub)}
+.a-lc{display:inline-block;font-size:11px;letter-spacing:.06em;border:1px solid var(--hero-line);border-radius:4px;padding:0 6px;margin-right:10px}
+.a-tgt{margin:0;font-size:clamp(24px,3.3vw,40px);line-height:1.45}
+.a-tgt[lang="ja"]{font-family:var(--f-ja)}
+.a-meta{margin:0;display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;font-family:var(--f-mono);font-size:13px;color:var(--hero-sub);border-top:1px solid var(--hero-line);padding-top:12px}
+.a-meta b{color:var(--amber);font-weight:500;font-variant-numeric:tabular-nums}
+@keyframes a-blink{50%{opacity:0}}
+.a-typing::after{content:"";display:inline-block;width:2px;height:.9em;background:var(--amber);vertical-align:-.08em;margin-left:3px;animation:a-blink 1s steps(1) infinite}
+.a-err,.show-err .a-errw{color:var(--red-soft);text-decoration:underline wavy var(--red);text-underline-offset:8px;text-decoration-thickness:2px}
+/* post-editing */
+.a-del{color:var(--red);text-decoration:line-through;text-decoration-thickness:2px}
+.a-ins{color:var(--amber);box-shadow:inset 0 -3px 0 var(--amber)}
+/* span-level QE */
+.a-scan .w{opacity:.5;transition:opacity .2s}
+.a-scan .w.read{opacity:1}
+.a-sp{border-radius:4px;transition:background .3s,color .3s,box-shadow .3s}
+.a-sp.major.on{background:rgba(255,138,120,.16);color:var(--red-soft);box-shadow:inset 0 -3px 0 var(--red)}
+.a-sp.minor.on{background:rgba(244,184,96,.14);color:#ffe2b8;box-shadow:inset 0 -3px 0 var(--amber)}
+.a-spans{display:grid;gap:8px;max-width:680px}
+.a-srow{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;font-family:var(--f-mono);font-size:13px;color:var(--hero-sub);opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+.a-srow.in{opacity:1;transform:none}
+.a-srow b{color:var(--hero-fg);font-weight:500}
+.a-sev{font-size:11px;letter-spacing:.06em;text-transform:uppercase;border:1px solid;border-radius:4px;padding:1px 6px}
+.a-sev.major{color:var(--red);border-color:var(--red)}.a-sev.minor{color:var(--amber);border-color:var(--amber)}
+/* word-level QE */
+.a-qe{display:flex;flex-wrap:wrap;gap:14px 16px}
+.a-cell{display:grid;gap:6px;justify-items:start}
+.a-cw{font-size:clamp(24px,3.3vw,40px);line-height:1.2;transition:color .3s}
+.a-bar{width:100%;min-width:32px;height:5px;border-radius:3px;background:var(--hero-track);overflow:hidden}
+.a-bar i{display:block;height:100%;width:0;transition:width .45s ease}
+.a-pv,.a-fix{font-family:var(--f-mono);font-size:12px;opacity:0;transition:opacity .3s}
+.a-pv{color:var(--hero-sub)}.a-fix{color:var(--amber)}
+.a-cell.ok .a-bar i{background:var(--green)}
+.a-cell.warn .a-bar i{background:var(--amber)}.a-cell.warn .a-cw{color:var(--amber)}
+.a-cell.bad .a-bar i{background:var(--red)}.a-cell.bad .a-cw{color:var(--red-soft);text-decoration:underline wavy var(--red);text-underline-offset:8px;text-decoration-thickness:2px}
+.a-cell.ok .a-pv,.a-cell.warn .a-pv,.a-cell.bad .a-pv,.a-cell.fixed .a-fix{opacity:1}
+.a-key{display:flex;flex-wrap:wrap;gap:6px 14px}
+.a-key i{display:inline-block;width:12px;height:5px;border-radius:3px;margin-right:6px;vertical-align:middle}
+/* counterfactual */
+.a-swap{display:inline-block;color:var(--hero-fg);font-weight:500}
+.a-swap.flip{color:var(--amber);animation:a-flip .5s ease}
+@keyframes a-flip{50%{transform:rotateX(90deg)}}
+.show-chg .a-chgw{color:var(--amber)}
+.a-expect{margin:-8px 0 0;font-family:var(--f-mono);font-size:13px;color:var(--hero-sub)}
+.a-expect span{color:var(--hero-fg)}.a-expect span.diff{color:var(--green)}
+.a-scores{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:560px}
+.a-sc{border:1px solid var(--hero-line);border-radius:8px;padding:10px 14px;display:grid;gap:2px;font-family:var(--f-mono);font-size:12px;color:var(--hero-sub)}
+.a-sc b{font-family:var(--f-display);font-size:24px;font-weight:650;color:var(--hero-fg);font-variant-numeric:tabular-nums}
+.a-sc b.good{color:var(--green)}.a-sc b.poor{color:var(--red)}
+.a-sc em{font-style:normal;color:var(--amber);min-height:1.5em}
+/* LLM judge */
+.a-judge{border:1px solid var(--hero-line);border-radius:8px;padding:12px 14px;display:grid;gap:7px;font-family:var(--f-mono);font-size:13px;max-width:680px}
+.a-judge .hd{font-size:12px;color:var(--hero-sub);display:flex;align-items:center;gap:8px}
+.a-judge .hd i{width:7px;height:7px;border-radius:50%;background:var(--amber)}
+.a-jl{display:flex;flex-wrap:wrap;gap:2px 10px;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+.a-jl.in{opacity:1;transform:none}
+.a-jl b{font-weight:500}.a-jl.ok b{color:var(--green)}.a-jl.no b{color:var(--red)}
+.a-jl span{color:var(--hero-sub)}
+.a-vs{display:grid;gap:8px;max-width:560px}
+.a-vrow{display:grid;grid-template-columns:120px minmax(0,1fr) 32px;gap:12px;align-items:center;font-family:var(--f-mono);font-size:13px;color:var(--hero-sub)}
+.a-vrow .t{height:8px;border-radius:4px;background:var(--hero-track);overflow:hidden}
+.a-vrow .t i{display:block;height:100%;width:0;transition:width .7s ease}
+.a-vrow b{text-align:right;color:var(--hero-fg);font-weight:500;font-variant-numeric:tabular-nums}
+/* attention */
+.a-nn{width:100%;max-width:680px;height:auto;display:block;overflow:visible}
+.a-nn .pill{fill:var(--hero-track);stroke:var(--hero-line);transition:fill .3s,stroke .3s}
+.a-nn .pill.on{fill:#1f4a63;stroke:var(--amber)}
+.a-nn .tok{font-family:var(--f-mono);font-size:15px;fill:var(--hero-fg);text-anchor:middle;dominant-baseline:middle}
+.a-nn .tok.t{font-family:var(--f-display);font-size:19px;font-weight:600;opacity:0;transition:opacity .3s}
+.a-nn .tok.t.on{opacity:1}
+.a-nn .rl{font-family:var(--f-mono);font-size:11px;fill:var(--hero-sub)}
+.a-nn line{stroke:var(--amber);stroke-linecap:round;transition:opacity .5s}
+.a-nn .dot{fill:var(--hero-line);transition:fill .3s}
+.a-nn .dot.on{fill:var(--amber)}
+/* LLM translation */
+.a-prompt{margin:0;font-family:var(--f-mono);font-size:13px;color:var(--hero-sub);border:1px solid var(--hero-line);border-radius:8px;padding:10px 12px;max-width:680px}
+.a-prompt b{color:var(--hero-fg);font-weight:500}
+.a-llm{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:20px;align-items:start}
+.a-out .w{opacity:0;transition:opacity .2s}
+.a-out .w.in{opacity:1}
+.a-out .w.hl{color:var(--amber);box-shadow:inset 0 -3px 0 var(--amber)}
+.a-next{display:grid;gap:8px;border-left:1px solid var(--hero-line);padding-left:16px;min-height:118px;align-content:start}
+.a-next p{margin:0;font-family:var(--f-mono);font-size:12px;color:var(--hero-sub)}
+.a-cand{display:grid;grid-template-columns:72px minmax(0,1fr) 36px;gap:8px;align-items:center;font-family:var(--f-mono);font-size:13px;color:var(--hero-sub)}
+.a-cand .t{height:6px;border-radius:3px;background:var(--hero-track);overflow:hidden}
+.a-cand .t i{display:block;height:100%;background:var(--hero-sub);transition:width .35s}
+.a-cand.pick{color:var(--hero-fg)}.a-cand.pick .t i{background:var(--amber)}
+.a-cand b{text-align:right;font-weight:400;font-variant-numeric:tabular-nums}
+@media (max-width:620px){
+  .stage{padding:16px 16px 12px;margin-top:12px}
+  .a-llm{grid-template-columns:minmax(0,1fr)}
+  .a-next{border-left:0;padding-left:0;border-top:1px solid var(--hero-line);padding-top:12px;min-height:0}
+  .a-vrow{grid-template-columns:100px minmax(0,1fr) 32px}
+}
 
 /* Sections */
 main .wrap{padding-block:72px 80px;display:grid;gap:88px}
@@ -210,20 +321,31 @@ footer .note{flex-basis:100%;font-family:var(--f-mono);font-size:12px;color:var(
     <div style="display:grid;gap:26px">
       <h1 class="name" id="name"></h1>
       <p class="aka" id="aka" hidden></p>
-      <div class="tagbox" id="tagbox" aria-live="polite"></div>
-      <div class="row">
-        <span class="small" id="exCount"></span>
-        <div class="row" style="gap:6px" role="group" aria-label="Choose an example sentence" id="dots"></div>
-        <button type="button" class="btn icon-btn" id="auto" aria-label="Pause"><i class="fa-solid fa-pause" aria-hidden="true"></i></button>
-      </div>
-      <div class="ctrl">
-        <div class="row" style="gap:8px" role="group" aria-label="Show the tagline in another language" id="langs"></div>
-        <div class="meter">
-          <div class="head"><span id="meterLabel"></span><b id="score"></b></div>
-          <div class="track"><div class="bar" id="bar"></div></div>
-          <span class="small" style="font-size:12px">estimated without a reference translation · illustrative</span>
+      <!-- The tagline (scene-qe) and the animations from content.js take turns here -->
+      <section class="stage" aria-label="Research animations">
+      <div class="stage-h"><span id="sceneName"></span><span id="stageTitle" hidden></span></div>
+      <div class="scenes" id="scenes">
+        <div class="scene" id="scene-qe">
+          <div class="tagbox" id="tagbox" aria-live="polite"></div>
+          <div class="row">
+            <span class="small" id="exCount"></span>
+            <div class="row" style="gap:6px" role="group" aria-label="Choose an example sentence" id="dots"></div>
+          </div>
+          <div class="ctrl">
+            <div class="row" style="gap:8px" role="group" aria-label="Show the tagline in another language" id="langs"></div>
+            <div class="meter">
+              <div class="head"><span id="meterLabel"></span><b id="score"></b></div>
+              <div class="track"><div class="bar" id="bar"></div></div>
+              <span class="small" style="font-size:12px">estimated without a reference translation · illustrative</span>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="scene-nav" id="sceneNav">
+        <button type="button" class="btn icon-btn" id="auto" aria-label="Pause"><i class="fa-solid fa-pause" aria-hidden="true"></i></button>
+        <div class="segs" id="segs" role="group" aria-label="Choose an animation"></div>
+      </div>
+      </section>
     </div>
   </div>
 </header>
@@ -471,17 +593,20 @@ footer .note{flex-basis:100%;font-family:var(--f-mono);font-size:12px;color:var(
     });
   });
 
-  /* ---------- rotating multilingual tagline ---------- */
-  var TG = C.tagline || {}, LANGS = list(TG.languages), EX = list(TG.examples);
-  if (!EX.length || !LANGS.length) return;
-  var state = { e: 0, i: 0, auto: true };
-  try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) state.auto = false; } catch (e) {}
+  /* ---------- hero: rotating multilingual tagline + research animations ---------- */
+  var TG = C.tagline || {}, LANGS = list(TG.languages), EX = list(TG.examples), AN = C.animations || {};
+  var hasQE = !!(EX.length && LANGS.length);
+  var reduceMotion = false;
+  try { reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) {}
+  var state = { e: 0, i: 0, auto: !reduceMotion };
+  var slots = function () { return []; }, render = function () {};   // replaced below when there is a tagline
+  if (hasQE) {
 
-  function slots() { // the languages, plus the faulty translation as a final slot
+  slots = function () { // the languages, plus the faulty translation as a final slot
     var ex = EX[state.e], s = LANGS.map(function (l) { return { label: l.label, name: l.name, code: l.code, q: l.quality == null ? null : l.quality, text: ex[l.code] || "" }; });
     if (ex.faulty) s.push({ label: ex.faulty.code.toUpperCase() + "?", name: ex.faulty.name + ", faulty MT output", code: ex.faulty.code, q: ex.faulty.quality, text: ex.faulty.text, note: ex.faulty.note, faulty: true });
     return s.filter(function (x) { return x.text; });
-  }
+  };
   function markErrors(t) { return esc(t).replace(/\[\[(.+?)\]\]/g, '<span class="err">$1</span>'); }
 
   /* Every sentence of every example is rendered once, stacked in the same spot;
@@ -503,14 +628,12 @@ footer .note{flex-basis:100%;font-family:var(--f-mono);font-size:12px;color:var(
   var dots = $("dots"), langs = $("langs");
   dots.innerHTML = EX.map(function (_, k) { return '<button type="button" class="dot" data-k="' + k + '" aria-label="Example ' + (k + 1) + '"></button>'; }).join("");
   dots.addEventListener("click", function (ev) { var b = ev.target.closest(".dot"); if (b) { state.e = +b.dataset.k; state.i = 0; render(); } });
-  var autoBtn = $("auto");
-  autoBtn.addEventListener("click", function () { state.auto = !state.auto; render(); });
   langs.addEventListener("click", function (ev) {
     var b = ev.target.closest("button"); if (!b) return;
-    state.i = +b.dataset.i; state.auto = false; render();
+    state.i = +b.dataset.i; state.auto = false; render(); setAutoIcon();
   });
 
-  function render() {
+  render = function () {
     var S = slots(); if (state.i >= S.length) state.i = 0;
     var c = S[state.i], bad = c.q != null && c.q < 0.6;
     var el = SLOTS[state.e][state.i];
@@ -523,23 +646,298 @@ footer .note{flex-basis:100%;font-family:var(--f-mono);font-size:12px;color:var(
     langs.innerHTML = S.map(function (s, k) {
       return '<button type="button" class="btn lang" data-i="' + k + '" title="' + esc(s.name) + '" aria-pressed="' + (k === state.i) + '">' + esc(s.label) + "</button>";
     }).join("");
-    if (autoBtn.dataset.on !== String(state.auto)) {   // only swap the icon when the state changes
-      autoBtn.dataset.on = String(state.auto);
-      autoBtn.innerHTML = '<i class="fa-solid ' + (state.auto ? "fa-pause" : "fa-play") + '" aria-hidden="true"></i>';
-      autoBtn.setAttribute("aria-label", state.auto ? "Pause the rotating sentences" : "Play the rotating sentences");
-      autoBtn.title = state.auto ? "Pause" : "Play";
-    }
     $("meterLabel").textContent = c.q == null ? "source sentence" : "predicted quality · " + c.name;
     $("score").textContent = c.q == null ? "—" : c.q.toFixed(2);
     var bar = $("bar"); bar.style.width = (c.q == null ? 0 : Math.round(c.q * 100)) + "%"; bar.classList.toggle("bad", bad);
-  }
+  };
   render();
-  setInterval(function () {
-    if (!state.auto || document.hidden) return;
-    var n = slots().length;
-    if (state.i + 1 >= n) { state.i = 0; state.e = (state.e + 1) % EX.length; } else state.i++;
-    render();
-  }, Math.max(1.5, TG.secondsPerLanguage || 3) * 1000);
+  } /* end of the tagline (hasQE) */
+
+  /* ---------- the animations ----------
+     Each one gets its element, its data from content.js and wait(ms),
+     which pauses for ms milliseconds (no time at all with reduced motion). */
+  var src = function (d) { return '<p class="a-src">' + (d.from ? '<span class="a-lc">' + esc(d.from.toUpperCase()) + "</span>" : "") + esc(d.source) + "</p>"; };
+  var meta = function (left, right) { return '<p class="a-meta"><span class="who">' + left + '</span><b class="ct">' + (right || "&nbsp;") + "</b></p>"; };
+  var arrow = function (d) { return esc((d.from || "").toUpperCase()) + (d.from ? " → " : "") + esc((d.to || "").toUpperCase()); };
+  var words = function (t) { return String(t || "").trim().split(/\s+/); };
+  var errSpans = function (t) { return esc(t).replace(/\[\[(.+?)\]\]/g, '<span class="a-errw">$1</span>'); };
+
+  function editOps(a, b) { // word-level edit script (Levenshtein), left to right
+    var n = a.length, m = b.length, D = [], i, j, ops = [];
+    for (i = 0; i <= n; i++) D[i] = [i];
+    for (j = 0; j <= m; j++) D[0][j] = j;
+    for (i = 1; i <= n; i++) for (j = 1; j <= m; j++)
+      D[i][j] = Math.min(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    i = n; j = m;
+    while (i || j) {
+      if (i && j && D[i][j] === D[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)) { ops.unshift({ from: a[i - 1], to: b[j - 1] }); i--; j--; }
+      else if (i && D[i][j] === D[i - 1][j] + 1) { ops.unshift({ from: a[i - 1], to: "" }); i--; }
+      else { ops.unshift({ from: "", to: b[j - 1] }); j--; }
+    }
+    return ops;
+  }
+
+  async function postEdit(el, d, wait) {
+    var ops = editOps(words(d.mt), words(d.corrected)), len = words(d.corrected).length, n = 0;
+    el.innerHTML = src(d) + '<p class="a-tgt" lang="' + esc(d.to) + '"></p>' + meta(arrow(d) + " · machine translation", "0 edits · HTER 0.00");
+    var t = el.querySelector(".a-tgt"), who = el.querySelector(".who"), ct = el.querySelector(".ct");
+    var spans = ops.map(function (o, k) {
+      var s = document.createElement("span"); s.textContent = o.from; if (!o.from) s.hidden = true;
+      if (k) t.appendChild(document.createTextNode(" ")); t.appendChild(s); return s;
+    });
+    await wait(1500); who.textContent = arrow(d) + " · post-editing…";
+    for (var k = 0; k < ops.length; k++) {
+      var o = ops[k], s = spans[k]; if (o.from === o.to) continue;
+      if (o.from) { s.className = "a-del"; await wait(700); }
+      if (!o.to) { s.hidden = true; n++; ct.textContent = n + " edit" + (n > 1 ? "s" : "") + " · HTER " + (n / len).toFixed(2); continue; }
+      s.className = "a-ins a-typing"; s.textContent = ""; s.hidden = false;
+      for (var ch of o.to) { s.textContent += ch; await wait(75); }
+      s.classList.remove("a-typing"); n++;
+      ct.textContent = n + " edit" + (n > 1 ? "s" : "") + " · HTER " + (n / len).toFixed(2);
+      await wait(380);
+    }
+    who.textContent = arrow(d) + " · post-edited by a human";
+  }
+
+  async function spanQE(el, d, wait) {
+    var spans = [], html = "";
+    var wrap = function (t) { return t.split(/(\s+)/).map(function (w) { return !w || /^\s+$/.test(w) ? w : '<span class="w">' + esc(w) + "</span>"; }).join(""); };
+    String(d.translation || "").split(/(\[\[.+?\]\])/).forEach(function (p) {
+      var m = /^\[\[(.+?)\]\]$/.exec(p);
+      if (!m) { html += wrap(p); return; }
+      var f = m[1].split("|"), sev = String(f[1] || "").trim().toLowerCase() === "minor" ? "minor" : "major";
+      spans.push({ text: f[0], sev: sev, note: f.slice(2).join("|").trim() });
+      html += '<span class="a-sp ' + sev + '" data-s="' + (spans.length - 1) + '">' + wrap(f[0]) + "</span>";
+    });
+    el.innerHTML = src(d) + '<p class="a-tgt a-scan" lang="' + esc(d.to) + '">' + html + "</p>" +
+      '<div class="a-spans">' + spans.map(function (s) {
+        return '<div class="a-srow"><span class="a-sev ' + s.sev + '">' + s.sev + "</span><b>" + esc(s.text) + "</b>" + (s.note ? "<span>" + esc(s.note) + "</span>" : "") + "</div>";
+      }).join("") + "</div>" + meta(arrow(d) + " · error span detection", "reading…");
+    var ws = el.querySelectorAll(".a-scan .w"), rows = el.querySelectorAll(".a-srow"), ct = el.querySelector(".ct"), seen = {};
+    await wait(900);
+    for (var k = 0; k < ws.length; k++) {
+      ws[k].classList.add("read");
+      var sp = ws[k].closest(".a-sp");
+      if (sp && !seen[sp.dataset.s]) {
+        seen[sp.dataset.s] = 1; await wait(250);
+        sp.classList.add("on"); rows[+sp.dataset.s].classList.add("in");
+        sp.querySelectorAll(".w").forEach(function (w) { w.classList.add("read"); });
+        await wait(800);
+      } else await wait(170);
+    }
+    var maj = spans.filter(function (s) { return s.sev === "major"; }).length, min = spans.length - maj;
+    ct.textContent = spans.length + " span" + (spans.length === 1 ? "" : "s") + " · " + maj + " major · " + min + " minor · MQM −" + (5 * maj + min);
+  }
+  async function wordQE(el, d, wait) {
+    var W = list(d.words);
+    el.innerHTML = src(d) + '<div class="a-qe" lang="' + esc(d.to) + '">' + W.map(function (w) {
+        return '<span class="a-cell"><span class="a-cw">' + esc(w[0]) + '</span><span class="a-bar"><i></i></span><span class="a-pv">' +
+          Number(w[1]).toFixed(2) + "</span>" + (w[2] ? '<span class="a-fix">→ ' + esc(w[2]) + "</span>" : "") + "</span>";
+      }).join("") + "</div>" +
+      meta('<span class="a-key"><span><i style="background:var(--green)"></i>OK</span><span><i style="background:var(--amber)"></i>doubtful</span><span><i style="background:var(--red)"></i>bad</span></span>', "word-level QE · scoring…");
+    var cells = el.querySelectorAll(".a-cell"), ct = el.querySelector(".ct"), sum = 0, bad = 0, warn = 0;
+    await wait(800);
+    for (var k = 0; k < W.length; k++) {
+      var p = +W[k][1], cls = p < 0.5 ? "bad" : p < 0.8 ? "warn" : "ok"; sum += p;
+      if (cls === "bad") bad++; if (cls === "warn") warn++;
+      cells[k].classList.add(cls); cells[k].querySelector("i").style.width = Math.round(p * 100) + "%";
+      await wait(280);
+    }
+    await wait(450);
+    W.forEach(function (w, k) { if (w[2]) cells[k].classList.add("fixed"); });
+    ct.textContent = "sentence " + (sum / (W.length || 1)).toFixed(2) + " · " + bad + " bad · " + warn + " doubtful";
+  }
+
+  async function counterfactual(el, d, wait) {
+    var m = /\{([^|}]*)\|([^}]*)\}/.exec(d.source || ""), O = list(d.output), E = list(d.expected), M = list(d.metric), H = list(d.human);
+    var strip = function (t) { return String(t || "").replace(/\[\[|\]\]/g, ""); };
+    var base = words(strip(O[0])), k = 0;
+    var second = String(O[1] || "").split(/(\[\[.+?\]\])/).map(function (part) {   // changed words + error span
+      var err = /^\[\[/.test(part); if (err) part = part.slice(2, -2);
+      var h = part.split(/(\s+)/).map(function (w) {
+        if (!w || /^\s+$/.test(w)) return w;
+        return w !== base[k++] ? '<span class="a-chgw">' + esc(w) + "</span>" : esc(w);
+      }).join("");
+      return err ? '<span class="a-errw">' + h + "</span>" : h;
+    }).join("");
+    var srcText = m ? esc(d.source.slice(0, m.index)) + '<span class="a-swap">' + esc(m[1]) + "</span>" + esc(d.source.slice(m.index + m[0].length)) : esc(d.source);
+    el.innerHTML = '<p class="a-src"><span class="a-lc">' + esc((d.from || "").toUpperCase()) + "</span>" + srcText + "</p>" +
+      '<p class="a-tgt" lang="' + esc(d.to) + '">' + esc(strip(O[0])) + "</p>" +
+      '<p class="a-expect">expected · <span>' + esc(E[0]) + "</span></p>" +
+      '<div class="a-scores"><div class="a-sc">Metric score<b class="m">' + Number(M[0]).toFixed(2) + "</b><em>&nbsp;</em></div>" +
+      '<div class="a-sc">Human rater<b class="h good">✓ ' + esc(H[0]) + "</b><em>&nbsp;</em></div></div>" +
+      meta(arrow(d) + " · counterfactual test", "");
+    var sw = el.querySelector(".a-swap"), t = el.querySelector(".a-tgt"), ex = el.querySelector(".a-expect span"),
+        mb = el.querySelector(".m"), hb = el.querySelector(".h"), em = el.querySelectorAll(".a-sc em"), ct = el.querySelector(".ct");
+    await wait(2000);
+    if (sw) { sw.classList.add("flip"); await wait(250); sw.textContent = m[2]; }
+    await wait(600);
+    ex.textContent = E[1] || ""; ex.classList.add("diff"); await wait(700);
+    t.innerHTML = second; t.classList.add("show-chg"); await wait(700);
+    t.classList.add("show-err"); await wait(600);
+    var delta = (+M[1]) - (+M[0]);
+    mb.textContent = Number(M[1]).toFixed(2); em[0].textContent = "Δ " + (delta < 0 ? "−" : "+") + Math.abs(delta).toFixed(2) + " · barely moves";
+    await wait(500);
+    hb.textContent = "✗ " + (H[1] || ""); hb.className = "h poor"; em[1].textContent = d.note || "";
+    ct.textContent = "the metric misses what the human sees";
+  }
+
+  async function judge(el, d, wait) {
+    var F = list(d.findings), S = list(d.scores);
+    el.innerHTML = src(d) + '<p class="a-tgt" lang="' + esc(d.to) + '">' + errSpans(d.translation) + "</p>" +
+      '<div class="a-judge"><span class="hd"><i></i><span class="st">LLM judge · reading…</span></span>' +
+      F.map(function (f) { return '<div class="a-jl ' + (f.ok ? "ok" : "no") + '"><b>' + (f.ok ? "✓ " : "✗ ") + esc(f.label) + "</b><span>" + esc(f.text) + "</span></div>"; }).join("") + "</div>" +
+      '<div class="a-vs">' + S.map(function (s, k) {
+        return '<div class="a-vrow"><span>' + esc(s.label) + '</span><span class="t"><i style="background:' + (k ? "var(--hero-sub)" : "var(--amber)") + '"></i></span><b>–</b></div>';
+      }).join("") + "</div>";
+    var t = el.querySelector(".a-tgt"), st = el.querySelector(".st"), lines = el.querySelectorAll(".a-jl"), rows = el.querySelectorAll(".a-vrow");
+    await wait(1200); st.textContent = "LLM judge · " + arrow(d);
+    for (var k = 0; k < F.length; k++) {
+      lines[k].classList.add("in"); if (!F[k].ok) t.classList.add("show-err");
+      await wait(900);
+    }
+    for (k = 0; k < S.length; k++) {
+      rows[k].querySelector("i").style.width = Math.max(0, Math.min(100, +S[k].value)) + "%";
+      rows[k].querySelector("b").textContent = S[k].value; await wait(700);
+    }
+  }
+
+  async function attention(el, d, wait) {
+    var A = list(d.source), B = list(d.target), Wt = list(d.weights), NS = "http://www.w3.org/2000/svg";
+    var step = 140, Wd = Math.max(A.length, B.length) * step;
+    var X = function (n, i) { return (Wd - n * step) / 2 + step / 2 + i * step; };
+    var svg = '<svg class="a-nn" viewBox="0 0 ' + Wd + ' 236" role="img" aria-label="Attention between ' + esc(A.join(" ")) + " and " + esc(B.join(" ")) + '">' +
+      '<text class="rl" x="0" y="12">' + esc((d.from || "").toUpperCase()) + ' · encoder</text><text class="rl" x="0" y="232">' + esc((d.to || "").toUpperCase()) + " · decoder</text><g></g>";
+    A.forEach(function (w, i) { var x = X(A.length, i); svg += '<rect class="pill s" x="' + (x - 60) + '" y="26" width="120" height="34" rx="17"/><text class="tok" x="' + x + '" y="44">' + esc(w) + '</text><circle class="dot" cx="' + x + '" cy="74" r="4"/>'; });
+    B.forEach(function (w, i) { var x = X(B.length, i); svg += '<rect class="pill t" x="' + (x - 60) + '" y="176" width="120" height="36" rx="18"/><text class="tok t" x="' + x + '" y="195" lang="' + esc(d.to) + '">' + esc(w) + "</text>"; });
+    el.innerHTML = svg + "</svg>" + meta("encoding…", "");
+    var sp = el.querySelectorAll(".pill.s"), dots = el.querySelectorAll(".dot"), tp = el.querySelectorAll(".pill.t"), tt = el.querySelectorAll(".tok.t"),
+        G = el.querySelector("g"), who = el.querySelector(".who"), ct = el.querySelector(".ct");
+    await wait(600);
+    for (var i = 0; i < A.length; i++) { sp[i].classList.add("on"); dots[i].classList.add("on"); await wait(260); }
+    await wait(300); sp.forEach(function (p) { p.classList.remove("on"); });
+    for (var k = 0; k < B.length; k++) {
+      var row = list(Wt[k]);
+      who.textContent = "decoding word " + (k + 1) + " of " + B.length;
+      G.querySelectorAll("line").forEach(function (l) { l.style.opacity = 0.12; });
+      tp[k].classList.add("on");
+      row.forEach(function (a, j) {
+        var l = document.createElementNS(NS, "line");
+        l.setAttribute("x1", X(A.length, j)); l.setAttribute("y1", 80); l.setAttribute("x2", X(B.length, k)); l.setAttribute("y2", 172);
+        l.setAttribute("stroke-width", (1 + a * 7).toFixed(1)); l.dataset.w = a; l.style.opacity = 0; G.appendChild(l);
+        requestAnimationFrame(function () { l.style.opacity = Math.max(0.08, a); });
+      });
+      if (row.length) { var top = row.indexOf(Math.max.apply(null, row)); ct.textContent = B[k] + " ← " + A[top] + " " + Number(row[top]).toFixed(2); }
+      await wait(650); tt[k].classList.add("on"); await wait(700); tp[k].classList.remove("on");
+    }
+    G.querySelectorAll("line").forEach(function (l) { l.style.opacity = Math.max(0.15, +l.dataset.w); });
+    who.textContent = d.note || "attention"; ct.innerHTML = "&nbsp;";
+  }
+
+  async function llmTranslate(el, d, wait) {
+    var T = list(d.tokens), CH = d.choices || {};
+    el.innerHTML = '<p class="a-prompt"><b>&gt; ' + esc(d.prompt) + "</b><br>“" + esc(d.source) + "”</p>" +
+      '<div class="a-llm"><p class="a-tgt a-out" lang="' + esc(d.to) + '">' +
+      T.map(function (w) { return '<span class="w">' + esc(w) + "</span>"; }).join(" ") +
+      '</p><div class="a-next"><p>next token</p></div></div>' + meta("generating…", "0 / " + T.length + " tokens");
+    var ws = el.querySelectorAll(".a-out .w"), nx = el.querySelector(".a-next"), who = el.querySelector(".who"), ct = el.querySelector(".ct");
+    function show(cands, pick) {
+      nx.innerHTML = "<p>next token</p>" + cands.map(function (c) {
+        return '<div class="a-cand' + (c[0] === pick ? " pick" : "") + '"><span>' + esc(c[0]) + '</span><span class="t"><i style="width:0"></i></span><b>' + Number(c[1]).toFixed(2) + "</b></div>";
+      }).join("");
+      var bars = nx.querySelectorAll("i");
+      requestAnimationFrame(function () { requestAnimationFrame(function () { cands.forEach(function (c, i) { bars[i].style.width = Math.round(c[1] * 100) + "%"; }); }); });
+    }
+    await wait(1100);
+    for (var i = 0; i < T.length; i++) {
+      var c = list(CH[T[i]]);
+      show(c.length ? c : [[T[i], 0.97]], T[i]); await wait(c.length ? 850 : 380);
+      if (i) ws[i - 1].classList.remove("a-typing");
+      ws[i].classList.add("in", "a-typing");
+      ct.textContent = (i + 1) + " / " + T.length + " tokens";
+      await wait(c.length ? 500 : 220);
+    }
+    if (ws.length) ws[ws.length - 1].classList.remove("a-typing");
+    await wait(600);
+    if (d.focus && CH[d.focus]) {
+      show(list(CH[d.focus]), d.focus);
+      for (i = 0; i < T.length; i++) if (T[i] === d.focus) { ws[i].classList.add("hl"); break; }
+    }
+    who.textContent = d.note || "done";
+  }
+
+  /* ---------- scenes: the tagline and the animations take turns ---------- */
+  var BUILD = { postedit: postEdit, spanqe: spanQE, wordqe: wordQE, counterfactual: counterfactual, judge: judge, attention: attention, llm: llmTranslate };
+  var box = $("scenes"), SC = [], STOP = {}, gen = 0;
+  if (AN.title) { $("stageTitle").textContent = AN.title; $("stageTitle").hidden = false; }
+  var order = list(AN.order).length ? list(AN.order) : ["qe"].concat(Object.keys(BUILD));
+  order.forEach(function (id) {
+    if (id === "qe") { if (hasQE) SC.push({ id: "qe", label: TG.label || "Quality estimation", el: $("scene-qe") }); return; }
+    var d = AN[id], fn = BUILD[id]; if (!d || !fn) return;
+    var items = Array.isArray(d) ? d : [d]; if (!items.length) return;
+    var el = document.createElement("div"); el.className = "scene"; box.appendChild(el);
+    SC.push({ id: id, label: items[0].label || id, el: el, fn: fn, items: items, n: 0 });
+  });
+  if (!hasQE) $("scene-qe").remove();
+  SC.forEach(function (s) { s.el.setAttribute("aria-hidden", "true"); });
+  if (!SC.length) { $("sceneNav").hidden = true; return; }
+
+  function play(s, instant) {
+    var d = s.items[s.n % s.items.length], g = instant ? -1 : ++gen;
+    var wait = instant || reduceMotion ? function () { return Promise.resolve(); } :
+      function (ms) { return new Promise(function (res, rej) { setTimeout(function () { g === gen ? res() : rej(STOP); }, ms); }); };
+    return Promise.resolve().then(function () { return s.fn(s.el, d, wait); })
+      .catch(function (e) { if (e !== STOP) console.error(e); throw STOP; });
+  }
+
+  var autoBtn = $("auto"), segs = $("segs"), cyc = { k: -1, doneAt: 0, stepAt: 0 };
+  function setAutoIcon() {
+    if (autoBtn.dataset.on === String(state.auto)) return;   // only swap the icon when the state changes
+    autoBtn.dataset.on = String(state.auto);
+    autoBtn.innerHTML = '<i class="fa-solid ' + (state.auto ? "fa-pause" : "fa-play") + '" aria-hidden="true"></i>';
+    autoBtn.setAttribute("aria-label", state.auto ? "Pause the animations" : "Play the animations");
+    autoBtn.title = state.auto ? "Pause" : "Play";
+  }
+  autoBtn.addEventListener("click", function () { state.auto = !state.auto; setAutoIcon(); });
+  segs.innerHTML = SC.map(function (s, k) { return '<button type="button" class="seg" data-k="' + k + '" aria-label="' + esc(s.label) + '" title="' + esc(s.label) + '"></button>'; }).join("");
+  segs.addEventListener("click", function (ev) { var b = ev.target.closest(".seg"); if (b) go(+b.dataset.k); });
+  if (SC.length < 2) segs.hidden = true;
+
+  function go(k) {
+    k = (k + SC.length) % SC.length; gen++;                   // gen++ stops any animation still running
+    SC.forEach(function (s, j) {
+      s.el.classList.toggle("on", j === k);
+      if (j === k) s.el.removeAttribute("aria-hidden"); else s.el.setAttribute("aria-hidden", "true");
+    });
+    Array.prototype.forEach.call(segs.children, function (b, j) { b.setAttribute("aria-current", String(j === k)); });
+    cyc.k = k; cyc.doneAt = 0; cyc.stepAt = Date.now();
+    var s = SC[k]; $("sceneName").textContent = s.label;
+    if (s.id === "qe") { state.i = 0; render(); }
+    else play(s).then(function () { cyc.doneAt = Date.now(); s.n++; }, function () {});
+  }
+
+  var perLang = Math.max(1.5, TG.secondsPerLanguage || 3) * 1000, hold = Math.max(1, AN.holdSeconds || 4) * 1000;
+  function tick() {
+    var now = Date.now(), s = SC[cyc.k];
+    if (!s) return;
+    if (!state.auto || document.hidden) { cyc.stepAt = now; if (cyc.doneAt) cyc.doneAt = now; return; }
+    if (s.id === "qe") {
+      if (now - cyc.stepAt < perLang) return;
+      cyc.stepAt = now;
+      if (state.i + 1 < slots().length) { state.i++; render(); }
+      else { state.e = (state.e + 1) % EX.length; state.i = 0; if (SC.length > 1) go(cyc.k + 1); else render(); }
+    } else if (cyc.doneAt && now - cyc.doneAt >= hold) go(cyc.k + 1);
+  }
+
+  /* Draw every animation in its finished state once, so the hero takes the
+     height of the tallest one and nothing below it moves while they play. */
+  function lockHeight() { box.style.minHeight = ""; box.style.minHeight = box.offsetHeight + "px"; }
+  Promise.all(SC.filter(function (s) { return s.fn; }).map(function (s) { return play(s, true).catch(function () {}); }))
+    .then(function () {
+      lockHeight(); setAutoIcon(); go(0); setInterval(tick, 200);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(lockHeight);
+      var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(lockHeight, 200); });
+    });
 })();
 </script>
 </body>
