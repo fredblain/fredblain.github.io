@@ -255,7 +255,7 @@ window.CONTENT = {
      Several links per item are fine; a site page can be relative: [guides](notebook-to-cluster/). */
   news: [
     { date: "2026-11", text: "Introducing ['LoopLab'](https://fredblain.github.io/edu/looplab), an interactive lab for learning Python loops: step through code line by line, predict each change before it happens, fill in trace tables, and solve 30 line-ordering puzzles."},
-    { date: "2026-10", text: "Introducing ['From Notebook to Cluster'](https://fredblain.github.io/notebook-to-cluster): four illustrated, comics-style guides to help students take code from GitHub to a shared GPU server, one step at a time." },
+    { date: "2026-10", text: "Introducing ['From Notebook to Cluster'](https://fredblain.github.io/edu/notebook-to-cluster): four illustrated, comics-style guides to help students take code from GitHub to a shared GPU server, one step at a time." },
     { date: "2026-10", text: "Findings paper of the WMT'26 Shared Task on Automated MT Evaluation is out (100 pages!!)." },
     { date: "2026-05", text: "Paper on gender disambiguation in MT at LREC 2026." },
     { date: "2025-06", text: "Paper on gender disambiguation and attention in MT at GITT 2025." }
